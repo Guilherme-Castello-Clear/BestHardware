@@ -1,0 +1,12 @@
+{
+    "mem": {
+        "brand": "Corsair",
+        "capacity": "8gb",
+        "categories": ["memram", "8gb", "corsair"]
+    },
+    "i5": {
+        "brand": "Intel",
+        "capacity": "3.6GHz",
+        "categories": ["processador", "intell", "i5"]
+    }
+}
