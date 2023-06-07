@@ -47,6 +47,18 @@ app.put('/elements/:index', function (req, res) {
     save(elements, res)
 });
 
+app.patch('/elements/:index', function (req, res) {
+    var target = req.params.index
+    let keys = Object.keys(req.body)
+    console.log(keys)
+    keys.map(key => {
+        elements[target][key] = req.body[key];
+    })
+    
+    console.log(elements)
+    save(elements, res)
+});
+
 app.post('/elements/', (req, res, next) => {
     let newest = req.body
     let lastId = lastIds();
