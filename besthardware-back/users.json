@@ -6,5 +6,13 @@
         "email": "g@g.com",
         "password": "123",
         "isAdmin": true
+    },
+    "2": {
+        "id": "2",
+        "name": "Guilherme Castello",
+        "age": "19",
+        "email": "g@g.com",
+        "password": "123",
+        "isAdmin": true
     }
 }

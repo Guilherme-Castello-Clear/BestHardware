@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 var fs = require('fs');
 
-const crypto = require('node:crypto')
+const crypto = require('node:crypto');
 var data = fs.readFileSync('products.json');
 var elements = JSON.parse(data);
 
@@ -21,7 +21,7 @@ app.use(cors());
 
 app.get('/test', (req, res, next) => {
     let lastId = 0;
-    lastId = lastIds();
+    lastId = lastIds(elements);
     console.log(lastId)
     res.send(elements)
 })
@@ -64,7 +64,7 @@ app.patch('/elements/:index', function (req, res) {
 
 app.post('/elements/', (req, res, next) => {
     let newest = req.body
-    let lastId = lastIds();
+    let lastId = lastIds(elements);
     let nextId = lastId + 1;
     elements[nextId] = newest
     save(elements, res)
@@ -93,6 +93,18 @@ app.post('/user/login', (req, res, next) => {
     }
 })
 
+app.post('/user/cadastration', (req, res, next) => {
+    let receivedPSW = req.body.password
+    let receivedRePSW = req.body.repassword
+    let receivedEmail = req.body.email
+    let usersLastId = lastIds(users)
+    for(var user in users){
+        users[user].email == receivedEmail ? console.log("User exists!") : console.log("Accont can be created")
+    }
+    res.status(200)
+
+})
+
 function save(elements, res, filename = 'products.json'){
     fs.writeFile(filename, JSON.stringify(elements), (err, results) => {
         if (err){ 
@@ -103,4 +115,18 @@ function save(elements, res, filename = 'products.json'){
             res.status(200).json({message: "Success! Be happy!"});
         }
     });
+}
+
+function getIds(json){
+    let idList = [];
+    for(var key in json){
+        idList.push(key);
+    }
+    return idList;
+}
+
+function lastIds(json){
+    let ids = getIds(json);
+    let lastId = ids[ids.length - 1];
+    return parseInt(lastId);
 }
