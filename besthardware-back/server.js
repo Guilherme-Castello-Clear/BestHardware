@@ -3,8 +3,12 @@ const express = require("express");
 const app = express();
 var fs = require('fs');
 
+const crypto = require('node:crypto')
 var data = fs.readFileSync('products.json');
 var elements = JSON.parse(data);
+
+var userData = fs.readFileSync('users.json');
+var users = JSON.parse(userData);
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
@@ -72,6 +76,23 @@ app.delete('/elements/:index', (req, res, next) => {
     save(elements, res);
 })
 
+//START USERS ROUTES
+
+
+app.post('/user/login', (req, res, next) => {
+    let receivedId = req.body.id
+    let receivedPSW = req.body.password
+    let receivedEmail = req.body.email
+    if (receivedPSW == users[receivedId].password && receivedEmail == users[receivedId].email){
+        console.log('Logado!')
+        res.status(200).send({message: "Login sucessfully!"})
+    }
+    else{
+        console.log('Não logado!')
+        res.status(401).json({message: "User data not found!"})
+    }
+})
+
 function save(elements, res, filename = 'products.json'){
     fs.writeFile(filename, JSON.stringify(elements), (err, results) => {
         if (err){ 
@@ -82,18 +103,4 @@ function save(elements, res, filename = 'products.json'){
             res.status(200).json({message: "Success! Be happy!"});
         }
     });
-}
-
-function getIds(){
-    let idList = [];
-    for(var key in elements){
-        idList.push(key);
-    }
-    return idList;
-}
-
-function lastIds(){
-    let ids = getIds();
-    let lastId = ids[ids.length - 1];
-    return parseInt(lastId);
 }
