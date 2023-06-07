@@ -41,7 +41,7 @@ app.get('/elements/:element/', (req, res) => {
     res.send(reply);
 });
 
-app.patch('/elements/:index', function (req, res) {
+app.put('/elements/:index', function (req, res) {
     var target = req.params.index
     elements[target] = req.body[target]
     save(elements, res)
