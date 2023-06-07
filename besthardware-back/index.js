@@ -35,25 +35,26 @@ app.get('/elements/:element/', (req, res) => {
     res.send(reply);
 });
 
-app.get('/test', (req, res, next) => {
-    const fileName = './products.json';
-    const file = require(fileName)
-    console.log(file["mem"])
-
-
-    //elements.push({"name": "Tony", "age": "99"})
-
-    res.send("tested")
-})
-
-
 app.patch('/elements/:index', function (req, res) {
-    console.log(elements)
-    console.log("----------------------------------------")
     var target = req.params.index
     elements[target] = req.body.editContent
-    console.log(elements)
-    fs.writeFile("products.json", JSON.stringify(elements), (err, result) => {
+    save(elements, res)
+});
+
+app.post('/elements/:id', (req, res, next) => {
+    let newest = req.body
+    elements[req.params.id] = newest
+    save(elements, res)
+})
+
+app.delete('/elements/:index', (req, res, next) => {
+    target = req.params.index
+    delete elements[target]
+    save(elements, res);
+})
+
+function save(elements, res, filename = 'products.json'){
+    fs.writeFile(filename, JSON.stringify(elements), (err, results) => {
         if (err){ 
             console.log('Error: ', err)
             res.status(500).json({message: "Error! :( ", err})
@@ -63,13 +64,4 @@ app.patch('/elements/:index', function (req, res) {
             res.status(200).json({message: "Success! Be happy!"});
         }
     })
-});
-
-app.post('/elements/', (req, res, next) => {
-    elements.push(req.body)
-    fs.writeFile("products.json", JSON.stringify(elements), (err, result) => {
-        if (err) console.log('Error: ', err)
-        console.log(err)
-    })
-    res.status(201).json({message: "Created! :D"})
-})
+}
