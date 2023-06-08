@@ -94,15 +94,36 @@ app.post('/user/login', (req, res, next) => {
 })
 
 app.post('/user/cadastration', (req, res, next) => {
+    
     let receivedPSW = req.body.password
     let receivedRePSW = req.body.repassword
     let receivedEmail = req.body.email
-    let usersLastId = lastIds(users)
-    for(var user in users){
-        users[user].email == receivedEmail ? console.log("User exists!") : console.log("Accont can be created")
+    let receivedAge = req.body.age
+    let receivedName = req.body.name
+    let receivedAdmin = req.body.isAdmin
+
+    let emailExist = getEmail(receivedEmail)
+    if (emailExist == false && receivedPSW == receivedRePSW && receivedAge && receivedName && receivedAdmin != undefined){
+        console.log("Cadastrado com sucesso!")
+
+        var nextId = lastIds(users) + 1
+        delete req.body.repassword
+        req.body.password = md5(req.body.password)
+        users[nextId] = req.body 
+        console.log(users)
+        fs.writeFileSync('users.json', JSON.stringify(users), (err, result) => {
+            if(err){
+                console.log("Something got wrong! :( "+ err)
+                res.status(400).json({message: "Algo deu errado!"})
+            }
+        })
+        res.status(200).json({message: "Accont created"})
+    }
+    else{
+        console.log("Invalid data!")
+        res.status(400).json({message: "Invalid data"})   
     }
     res.status(200)
-
 })
 
 function save(elements, res, filename = 'products.json'){
@@ -129,4 +150,18 @@ function lastIds(json){
     let ids = getIds(json);
     let lastId = ids[ids.length - 1];
     return parseInt(lastId);
+}
+
+function getEmail(receivedEmail){
+    for(var user in users){
+        if (users[user].email == receivedEmail){
+            console.log(users[user])
+            return receivedEmail
+        }
+    }
+    return false
+}
+
+function md5(content) {  
+    return crypto.createHash('md5').update(content).digest('hex')
 }

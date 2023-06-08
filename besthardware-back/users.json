@@ -1,18 +1,1 @@
-{
-    "1": {
-        "id": "1",
-        "name": "Guilherme Castello",
-        "age": "19",
-        "email": "g@g.com",
-        "password": "123",
-        "isAdmin": true
-    },
-    "2": {
-        "id": "2",
-        "name": "Guilherme Castello",
-        "age": "19",
-        "email": "g@g.com",
-        "password": "123",
-        "isAdmin": true
-    }
-}
+{"1":{"id":"1","name":"Guilherme Castello","age":"19","email":"g@g.com","password":"123","isAdmin":true},"2":{"id":"2","name":"Guilherme Castello","age":"19","email":"g@g.com","password":"123","isAdmin":true},"3":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@a.com"},"4":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@a.com"},"5":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@a.com"},"6":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@a.com"},"7":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@a.com"},"8":{"isAdmin":true,"name":"Maria","age":"20","password":"123","email":"g@c.com"},"9":{"isAdmin":true,"name":"Maria","age":"20","password":"202cb962ac59075b964b07152d234b70","email":"g@d.com"},"10":{"isAdmin":true,"name":"Maria","age":"20","password":"202cb962ac59075b964b07152d234b70","email":"g@e.com"}}
