@@ -3,9 +3,9 @@ const express = require("express");
 const app = express();
 var fs = require('fs');
 
-const crypto = require('node:crypto');
 var data = fs.readFileSync('products.json');
 var elements = JSON.parse(data);
+const bhFunc = require('./functions/functions')
 
 var userData = fs.readFileSync('users.json');
 var users = JSON.parse(userData);
@@ -20,7 +20,7 @@ app.use(express.static('public'));
 app.use(cors());
 
 app.post('/test', (req, res, next) => {
-    console.log(findUser(req.body.email))
+    console.log(bhFunc.teste("okkkk"))
     res.status(200).send('ok')
 })
 
@@ -45,7 +45,7 @@ app.get('/elements/:element/', (req, res) => {
 app.put('/elements/:index', function (req, res) {
     var target = req.params.index
     elements[target] = req.body[target]
-    save(elements, res)
+    bhFunc.save(elements, res)
 });
 
 app.patch('/elements/:index', function (req, res) {
@@ -57,30 +57,30 @@ app.patch('/elements/:index', function (req, res) {
     })
     
     console.log(elements)
-    save(elements, res)
+    bhFunc.save(elements, res)
 });
 
 app.post('/elements/', (req, res, next) => {
     let newest = req.body
-    let lastId = lastIds(elements);
+    let lastId = bhFunc.lastIds(elements);
     let nextId = lastId + 1;
     elements[nextId] = newest
-    save(elements, res)
+    bhFunc.save(elements, res)
 })
 
 app.delete('/elements/:index', (req, res, next) => {
     target = req.params.index
     delete elements[target]
-    save(elements, res);
+    bhFunc.save(elements, res);
 })
 
 //START USERS ROUTES
 
 
 app.post('/user/login', (req, res, next) => {
-    let receivedPSW = md5(req.body.password)
+    let receivedPSW = bhFunc.md5(req.body.password)
     let receivedEmail = req.body.email
-    let receivedId = findUser(receivedEmail)
+    let receivedId = bhFunc.findUser(receivedEmail, users)
     if (receivedPSW == users[receivedId].password && receivedEmail == users[receivedId].email){
         res.status(200).json(users[receivedId])
     }
@@ -99,13 +99,13 @@ app.post('/user/cadastration', (req, res, next) => {
     let receivedName = req.body.name
     let receivedAdmin = req.body.isAdmin
 
-    let emailExist = getEmail(receivedEmail)
+    let emailExist = bhFunc.getEmail(receivedEmail, users)
     if (emailExist == false && receivedPSW == receivedRePSW && receivedAge && receivedName && receivedAdmin != undefined){
         console.log("Cadastrado com sucesso!")
 
-        var nextId = lastIds(users) + 1
+        var nextId = bhFunc.lastIds(users) + 1
         delete req.body.repassword
-        req.body.password = md5(req.body.password)
+        req.body.password = bhFunc.md5(req.body.password)
         req.body.id = nextId
         users[nextId] = req.body 
         fs.writeFileSync('users.json', JSON.stringify(users), (err, result) => {
@@ -123,51 +123,3 @@ app.post('/user/cadastration', (req, res, next) => {
     res.status(200)
 })
 
-function save(elements, res, filename = 'products.json'){
-    fs.writeFile(filename, JSON.stringify(elements), (err, results) => {
-        if (err){ 
-            console.log('Error: ', err)
-            res.status(500).json({message: "Error! :( ", err});
-        }
-        else{
-            res.status(200).json({message: "Success! Be happy!"});
-        }
-    });
-}
-
-function getIds(json){
-    let idList = [];
-    for(var key in json){
-        idList.push(key);
-    }
-    return idList;
-}
-
-function lastIds(json){
-    let ids = getIds(json);
-    let lastId = ids[ids.length - 1];
-    return parseInt(lastId);
-}
-
-function getEmail(receivedEmail){
-    for(var user in users){
-        if (users[user].email == receivedEmail){
-            console.log(users[user])
-            return receivedEmail
-        }
-    }
-    return false
-}
-
-function findUser(email){
-    for(var user in users){
-        if(users[user].email == email){
-            return user
-        }
-    }
-}
-
-
-function md5(content) {  
-    return crypto.createHash('md5').update(content).digest('hex')
-}
