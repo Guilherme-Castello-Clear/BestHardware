@@ -19,11 +19,9 @@ app.listen(8000, () => console.log("Server Start at the Port 8000"));
 app.use(express.static('public'));
 app.use(cors());
 
-app.get('/test', (req, res, next) => {
-    let lastId = 0;
-    lastId = lastIds(elements);
-    console.log(lastId)
-    res.send(elements)
+app.post('/test', (req, res, next) => {
+    console.log(findUser(req.body.email))
+    res.status(200).send('ok')
 })
 
 app.get('/elements', (req, res) => {
@@ -80,12 +78,11 @@ app.delete('/elements/:index', (req, res, next) => {
 
 
 app.post('/user/login', (req, res, next) => {
-    let receivedId = req.body.id
-    let receivedPSW = req.body.password
+    let receivedPSW = md5(req.body.password)
     let receivedEmail = req.body.email
+    let receivedId = findUser(receivedEmail)
     if (receivedPSW == users[receivedId].password && receivedEmail == users[receivedId].email){
-        console.log('Logado!')
-        res.status(200).send({message: "Login sucessfully!"})
+        res.status(200).json(users[receivedId])
     }
     else{
         console.log('Não logado!')
@@ -109,8 +106,8 @@ app.post('/user/cadastration', (req, res, next) => {
         var nextId = lastIds(users) + 1
         delete req.body.repassword
         req.body.password = md5(req.body.password)
+        req.body.id = nextId
         users[nextId] = req.body 
-        console.log(users)
         fs.writeFileSync('users.json', JSON.stringify(users), (err, result) => {
             if(err){
                 console.log("Something got wrong! :( "+ err)
@@ -161,6 +158,15 @@ function getEmail(receivedEmail){
     }
     return false
 }
+
+function findUser(email){
+    for(var user in users){
+        if(users[user].email == email){
+            return user
+        }
+    }
+}
+
 
 function md5(content) {  
     return crypto.createHash('md5').update(content).digest('hex')
